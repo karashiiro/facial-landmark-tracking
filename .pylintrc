@@ -1,0 +1,10 @@
+[TYPECHECK]
+ignored-modules=cv2,dlib
+
+[MESSAGES CONTROL]
+disable=missing-module-docstring,
+        missing-function-docstring,
+        invalid-name,
+        unbalanced-tuple-unpacking,
+        line-too-long,
+        too-many-arguments

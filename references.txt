@@ -1,0 +1,11 @@
+Timm, F. and Barth, E. (2011). "Accurate eye centre localisation by means of gradients".
+
+https://www.kaggle.com/selfishgene/youtube-faces-with-facial-keypoints
+
+Lior Wolf, Tal Hassner and Itay Maoz
+Face Recognition in Unconstrained Videos with Matched Background Similarity.
+IEEE Conf. on Computer Vision and Pattern Recognition (CVPR), 2011.
+
+Adrian Bulat and Georgios Tzimiropoulos.
+How far are we from solving the 2D & 3D Face Alignment problem?
+(and a dataset of 230,000 3D facial landmarks), arxiv, 2017.

@@ -1,0 +1,98 @@
+import glob
+import math
+from os import path, mkdir
+import random
+
+import cv2
+import dlib
+from imutils import face_utils
+import numpy as np
+import pandas as pd
+
+TARGET_SIZE = (256, 256)
+DATASET_PATH = "E:\\youtube_faces"
+
+class DetectorInput:
+    """dlib input container class."""
+    def __init__(self, file: str, top: int, left: int, width: int, height: int, points: list):
+        self.file = file
+        self.top = top
+        self.left = left
+        self.width = width
+        self.height = height
+        self.points = points
+
+def build_xml(inputs: list, filename: str):
+    xmlstr = "<dataset>\n"
+    xmlstr += "  <images>\n"
+    for next_input in inputs:
+        xmlstr += "    <image file='%s'>\n" % next_input.file
+        xmlstr += "      <box top='%d' left='%d' width='%d' height='%d'>\n" % (next_input.top, next_input.left, next_input.width, next_input.height)
+        for i, (x, y) in enumerate(next_input.points):
+            xmlstr += "        <part name='%d' x='%d' y='%d' />\n" % (i, x, y)
+        xmlstr += "      </box>\n"
+        xmlstr += "    </image>\n"
+    xmlstr += "  </images>\n"
+    xmlstr += "</dataset>"
+
+    with open(filename, "w") as f:
+        f.write(xmlstr)
+
+def main():
+    video_df = pd.read_csv(DATASET_PATH + "\\youtube_faces_with_keypoints_full.csv")
+    npz_files = glob.glob(DATASET_PATH + "\\youtube_faces_*\\*.npz")
+    video_ids = [x.split('\\')[-1].split('.')[0] for x in npz_files]
+
+    full_paths = {}
+    for video_id, full_path in zip(video_ids, npz_files):
+        full_paths[video_id] = full_path
+
+    detector = dlib.get_frontal_face_detector()
+
+    if not path.exists("./data"):
+        mkdir("./data")
+
+    inputs = []
+    for video_id, video_path in full_paths.items():
+        video_info = video_df.loc[video_df["videoID"] == video_id]
+        frame_count = int(video_info["videoDuration"].values[0])
+
+        video_file = np.load(video_path)
+        images = video_file["colorImages"]
+        landmarks = video_file["landmarks2D"]
+        for i in range(frame_count):
+            image = images[:,:,:,i]
+            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            filename = "data/%s_%d.png" % (video_id, i)
+            if not path.isfile(filename):
+                cv2.imwrite(filename, image)
+
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            h, w = image.shape[:2]
+            image = cv2.resize(image, TARGET_SIZE)
+            image_scale_x = TARGET_SIZE[0] / w
+            image_scale_y = TARGET_SIZE[1] / h
+
+            faces = detector(image, 1)
+            if len(faces) == 0:
+                continue
+            left, top, width, height = face_utils.rect_to_bb(faces[0])
+            left = math.floor(left * image_scale_x)
+            width = math.floor(width * image_scale_x)
+            top = math.floor(top * image_scale_y)
+            height = math.floor(height * image_scale_y)
+
+            pts = landmarks[:,:,i]
+
+            next_input = DetectorInput(filename, top, left, width, height, list(pts))
+            inputs.append(next_input)
+
+    random.shuffle(inputs)
+    split_index = math.floor(len(inputs) * 0.8)
+    train_inputs = inputs[0:split_index]
+    test_inputs = inputs[split_index:]
+    build_xml(train_inputs, "youtube_faces_train.xml")
+    build_xml(test_inputs, "youtube_faces_test.xml")
+
+if __name__ == "__main__":
+    main()
