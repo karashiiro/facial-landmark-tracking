@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 
 TARGET_SIZE = (256, 256)
-DATASET_PATH = "E:\\youtube_faces"
+DATASET_PATH = "C:\\youtube_faces"
 
 class DetectorInput:
     """dlib input container class."""
@@ -61,8 +61,8 @@ def main():
         images = video_file["colorImages"]
         landmarks = video_file["landmarks2D"]
         for i in range(frame_count):
-            image = images[:,:,:,i]
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            original_image = images[:,:,:,i]
+            image = cv2.cvtColor(original_image, cv2.COLOR_RGB2BGR)
             filename = "data/%s_%d.png" % (video_id, i)
             if not path.isfile(filename):
                 cv2.imwrite(filename, image)
@@ -70,11 +70,11 @@ def main():
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             h, w = image.shape[:2]
             image = cv2.resize(image, TARGET_SIZE)
-            image_scale_x = TARGET_SIZE[0] / w
-            image_scale_y = TARGET_SIZE[1] / h
+            image_scale_x = w / TARGET_SIZE[0]
+            image_scale_y = h / TARGET_SIZE[1]
 
             faces = detector(image, 1)
-            if len(faces) == 0:
+            if len(faces) != 1:
                 continue
             left, top, width, height = face_utils.rect_to_bb(faces[0])
             left = math.floor(left * image_scale_x)

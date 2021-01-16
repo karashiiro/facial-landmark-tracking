@@ -1,4 +1,6 @@
 data/
+predictors/
 __pycache__/
+.vscode/
 *.xml
 *.dat
