@@ -10,10 +10,13 @@ from eye_utils import get_gradient, weight_preprocess, normalize_gradient, eye_p
 
 TARGET_INPUT_SIZE = (256, 256)
 
-def main():
-    lStart, lEnd = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
-    rStart, rEnd = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]
+right_eye_points = [30, 31, 32, 33, 35, 36]
+left_eye_points = [37, 38, 39, 40, 41, 42]
 
+def get_points_at_indices(arr, indices) -> list:
+    return [arr[i] for i in indices]
+
+def main():
     print("Loading models...")
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor("youtube_faces_68_points.dat")
@@ -48,8 +51,8 @@ def main():
             #for x, y in points:
             #    cv2.circle(image, (math.floor(x * face_scale_x), math.floor(y * face_scale_y)), 1, (0, 0, 255), -1)
 
-            left_eye_pts = points[lStart:lEnd]
-            right_eye_pts = points[rStart:rEnd]
+            left_eye_pts = get_points_at_indices(points, left_eye_points)
+            right_eye_pts = get_points_at_indices(points, right_eye_points)
             for _, eye_pts in enumerate([left_eye_pts, right_eye_pts]):
                 # get separate bounding boxes around the eyes
                 ex, ey = np.transpose(eye_pts)
