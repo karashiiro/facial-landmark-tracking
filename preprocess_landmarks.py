@@ -62,12 +62,9 @@ def main():
         landmarks = video_file["landmarks2D"]
         for i in range(frame_count):
             original_image = images[:,:,:,i]
-            image = cv2.cvtColor(original_image, cv2.COLOR_RGB2BGR)
-            filename = "data/%s_%d.png" % (video_id, i)
-            if not path.isfile(filename):
-                cv2.imwrite(filename, image)
+            original_image = cv2.cvtColor(original_image, cv2.COLOR_RGB2BGR)
 
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
             h, w = image.shape[:2]
             image = cv2.resize(image, TARGET_SIZE)
             image_scale_x = w / TARGET_SIZE[0]
@@ -83,6 +80,18 @@ def main():
             height = math.floor(height * image_scale_y)
 
             pts = landmarks[:,:,i]
+            pts_x, pts_y = pts.T
+            pts_min_x = np.min(pts_x)
+            pts_max_x = np.max(pts_x)
+            pts_min_y = np.min(pts_y)
+            pts_max_y = np.max(pts_y)
+            # Check if any of the keypoints are in the frame
+            if pts_max_x < left or pts_min_x > left + width or pts_max_y < top or pts_min_y > top + height:
+                continue
+
+            filename = "data/%s_%d.png" % (video_id, i)
+            if not path.isfile(filename):
+                cv2.imwrite(filename, original_image)
 
             next_input = DetectorInput(filename, top, left, width, height, list(pts))
             inputs.append(next_input)
