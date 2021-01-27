@@ -3,3 +3,5 @@ Very WIP face and eye tracking using OpenCV and dlib.
 
 Pick up the model from [this repository](https://github.com/karashiiro/facial-landmark-tracking-models) and put it in the same directory as the other code files,
 install the dependencies with `pip install -r requirements.txt`, and then run `python demo.py` to view the current state of the project.
+
+The eye centre tracking is implemented based on `Timm, F. and Barth, E. (2011). "Accurate eye centre localisation by means of gradients".`
