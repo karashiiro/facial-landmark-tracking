@@ -48,8 +48,8 @@ def main():
 
             # loop over the (x, y)-coordinates for the facial landmarks
             # and draw them on the image
-            #for x, y in points:
-            #    cv2.circle(image, (math.floor(x * face_scale_x), math.floor(y * face_scale_y)), 1, (0, 0, 255), -1)
+            for x, y in points:
+                cv2.circle(image, (math.floor(x * face_scale_x), math.floor(y * face_scale_y)), 1, (0, 0, 255), -1)
 
             left_eye_pts = get_points_at_indices(points, left_eye_points)
             right_eye_pts = get_points_at_indices(points, right_eye_points)
