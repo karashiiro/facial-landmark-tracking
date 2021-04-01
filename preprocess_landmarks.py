@@ -9,7 +9,7 @@ from imutils import face_utils
 import numpy as np
 import pandas as pd
 
-TARGET_SIZE = (256, 256)
+TARGET_SIZE = (128, 128)
 DATASET_PATH = "C:\\youtube_faces"
 
 class DetectorInput:
