@@ -9,7 +9,6 @@ from imutils import face_utils
 import numpy as np
 import pandas as pd
 
-TARGET_SIZE = (128, 128)
 DATASET_PATH = "C:\\youtube_faces"
 
 class DetectorInput:
@@ -65,19 +64,11 @@ def main():
             original_image = cv2.cvtColor(original_image, cv2.COLOR_RGB2BGR)
 
             image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
-            h, w = image.shape[:2]
-            image = cv2.resize(image, TARGET_SIZE)
-            image_scale_x = w / TARGET_SIZE[0]
-            image_scale_y = h / TARGET_SIZE[1]
 
             faces = detector(image, 1)
             if len(faces) != 1:
                 continue
             left, top, width, height = face_utils.rect_to_bb(faces[0])
-            left = math.floor(left * image_scale_x)
-            width = math.floor(width * image_scale_x)
-            top = math.floor(top * image_scale_y)
-            height = math.floor(height * image_scale_y)
 
             pts = landmarks[:,:,i]
             pts_x, pts_y = pts.T
