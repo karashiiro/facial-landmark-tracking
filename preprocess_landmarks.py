@@ -88,7 +88,7 @@ def main():
             inputs.append(next_input)
 
     random.shuffle(inputs)
-    split_index = math.floor(len(inputs) * 0.8)
+    split_index = math.floor(len(inputs) * 0.9) # 90% train, 10% test since our dataset is somewhat large
     train_inputs = inputs[0:split_index]
     test_inputs = inputs[split_index:]
     build_xml(train_inputs, "youtube_faces_train.xml")

@@ -4,10 +4,10 @@ import os
 import dlib
 
 options = dlib.shape_predictor_training_options()
-options.tree_depth = 4
-options.nu = 0.1
-options.cascade_depth = 15
-options.feature_pool_size = 800
+options.tree_depth = 3
+options.nu = 0.3
+options.cascade_depth = 30
+options.feature_pool_size = 1000
 options.num_test_splits = 20
 options.oversampling_amount = 1
 options.oversampling_translation_jitter = 0.4
