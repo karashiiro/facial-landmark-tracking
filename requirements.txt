@@ -3,3 +3,4 @@ dlib>=19.21.1
 numpy>=1.18.5
 opencv-python>=4.4.0
 pandas>=1.2.0
+sklearn>=0.24.1

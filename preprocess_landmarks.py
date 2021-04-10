@@ -8,6 +8,7 @@ import dlib
 from imutils import face_utils
 import numpy as np
 import pandas as pd
+from skimage.util import random_noise
 
 DATASET_PATH = "C:\\youtube_faces"
 
@@ -63,6 +64,11 @@ def main():
             original_image = images[:,:,:,i]
             original_image = cv2.cvtColor(original_image, cv2.COLOR_RGB2BGR)
 
+            # Also save a copy with Gaussian noise. Gaussian noise most-closely
+            # matches the noise apparent in low-quality webcam footage.
+            image_gaussian = random_noise(original_image, mode="gaussian", mean=0, var=0.05, clip=True)
+            image_gaussian = (255 * image_gaussian).astype(np.uint8)
+
             image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
 
             faces = detector(image, 1)
@@ -84,8 +90,14 @@ def main():
             if not path.isfile(filename):
                 cv2.imwrite(filename, original_image)
 
+            filename_gaussian = "data/%s_%d_gaussian.png" % (video_id, i)
+            if not path.isfile(filename_gaussian):
+                cv2.imwrite(filename_gaussian, image_gaussian)
+
             next_input = DetectorInput(filename, top, left, width, height, list(pts))
-            inputs.append(next_input)
+            next_input_gaussian = DetectorInput(filename_gaussian, top, left, width, height, list(pts))
+
+            inputs += [next_input, next_input_gaussian]
 
     random.shuffle(inputs)
     split_index = math.floor(len(inputs) * 0.9) # 90% train, 10% test since our dataset is somewhat large
